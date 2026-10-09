@@ -34,7 +34,7 @@ These are the global settings for the Compute API.
 title: ComputeManagementClient
 description: Compute Client
 openapi-type: arm
-tag: package-2026-04-01
+tag: package-2026-09-01
 
 directive:
   - where:
@@ -212,6 +212,11 @@ directive:
     suppress:
       - NestedResourcesMustHaveListOperation
     reason: CRP supports the list /restorePoint operation by allowing customers to call Get RestorePointCollection with $expand=RestorePoints
+  - where:
+      - $.definitions.VirtualMachineProtection
+    suppress:
+      - NestedResourcesMustHaveListOperation
+    reason: VirtualMachineProtection is a singleton child resource of a virtual machine, addressable only as vmProtection/default, so a list operation is not applicable.
   - where:
       - $.definitions.SubResourceWithColocationStatus.properties
     suppress:
@@ -850,6 +855,10 @@ suppressions:
     from: ComputeRP.json
     where: $.paths["/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{vmName}/restart"].post
   - code: PostResponseCodes
+    reason: The restore action is a long-running POST that returns no content, matching the 202 and default response shape used by all other Microsoft.Compute virtual machine action operations.
+    from: ComputeRP.json
+    where: $.paths["/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{vmName}/restore"].post
+  - code: PostResponseCodes
     reason: Existing POST response codes maintained for backward compatibility.
     from: ComputeRP.json
     where: $.paths["/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{vmName}/start"].post
@@ -926,6 +935,27 @@ These settings apply only when `--tag=package-2026-04-01-only` is specified on t
 ```yaml $(tag) == 'package-2026-04-01-only'
 input-file:
   - stable/2026-04-01/ComputeRP.json
+```
+
+### Tag: package-2026-09-01
+
+These settings apply only when `--tag=package-2026-09-01` is specified on the command line.
+
+``` yaml $(tag) == 'package-2026-09-01'
+input-file:
+  - stable/2026-09-01/ComputeRP.json
+  - stable/2026-03-02/DiskRP.json
+  - stable/2021-07-01/skus.json
+  - stable/2025-12-03/GalleryRP.json
+```
+
+### Tag: package-2026-09-01-only
+
+These settings apply only when `--tag=package-2026-09-01-only` is specified on the command line.
+
+```yaml $(tag) == 'package-2026-09-01-only'
+input-file:
+  - stable/2026-09-01/ComputeRP.json
 ```
 
 ### Tag: package-2025-12-03
